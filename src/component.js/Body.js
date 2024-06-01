@@ -1,9 +1,20 @@
 import RestaurantCard from "./RestaurantCard";
 import { useEffect, useState } from "react";
+import Shimmer from "./Shimmer";
 
 const Body = (props)=> {
     const {resData} = props;
-    const [listOfRestaurants, setListOfRestaurants] = useState([]);
+    const [listOfRestaurants, setListOfRestaurants] = useState(null);
+    const [originalList, setOriginalList]= useState([]);
+
+    const handleClick = ()=>{
+       const filteredList = listOfRestaurants.filter((res)=>res.info.avgRating > 4.3);
+        setListOfRestaurants(filteredList);
+    };
+
+    const hadleClearFilter = ()=>{
+        const clearedFilter = setListOfRestaurants(originalList);
+    }
 
   useEffect(()=>{
     fetchData();
@@ -16,19 +27,33 @@ const Body = (props)=> {
         console.log( json);
 
         setListOfRestaurants(json.data.cards[1].card.card.gridElements.infoWithStyle.restaurants);
-        
+
+        setOriginalList(json.data.cards[1].card.card.gridElements.infoWithStyle.restaurants);
   }
+    if(listOfRestaurants === null) return <Shimmer />
+
+
+  
     
     return (
         <div className="body">
             <div className="filter">
               <button 
               className="filter-button"
-                onClick={()=>console.log("button clicked")}
-              >
+                onClick={handleClick}>
                 TOP RATED RESTAURANT
-              </button>
+              </button> 
             </div>
+            <div className="removeFilter">
+            <button 
+              className="clear-filter"
+                onClick={hadleClearFilter}
+              >Clear Filter</button>
+            </div>
+
+
+
+
             <div className="Search">Search</div>
             
             <div className="res-container">
